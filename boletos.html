@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Boletos - Rifa Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a0ca3;
+            --primary-light: #4cc9f0;
+            --accent-color: #f72585;
+            --success-color: #2ecc71;
+            --light-bg: #f8f9fa;
+            --dark-text: #2d3748;
+            --light-text: #718096;
+            --border-radius: 20px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+            --card-gradient: linear-gradient(145deg, #ffffff, #f5f7ff);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f2f5, #e2e8f0);
+            color: var(--dark-text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(67, 97, 238, 0.05), transparent 30%),
+                        radial-gradient(circle at bottom left, rgba(247, 37, 133, 0.05), transparent 30%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: var(--card-gradient);
+            backdrop-filter: blur(5px);
+        }
+        
+        header {
+            background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f72585, #4cc9f0, #f8961e);
+        }
+        
+        .logo {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 15px;
+        }
+        
+        .logo i {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            font-weight: 300;
+        }
+        
+        .search-section {
+            padding: 30px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 18px;
+            transition: var(--transition);
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2), 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .search-box button {
+            padding: 16px 25px;
+            border: none;
+            border-radius: 15px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            color: var(--light-text);
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            color: var(--light-text);
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .results-section {
+            padding: 0 30px 30px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light-text);
+        }
+        
+        .no-results i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+        }
+        
+        .ticket-details {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        
+        .ticket-details::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+        }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .ticket-number-large {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            background: #f0f4ff;
+            padding: 15px 25px;
+            border-radius: 15px;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+        
+        .transaction-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .status-verified {
+            background: #e8f5e9;
+            color: #28a745;
+        }
+        
+        .status-pending {
+            background: #fffde7;
+            color: #ff9800;
+        }
+        
+        .buyer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .info-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card p {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .ticket-list {
+            margin-top: 30px;
+        }
+        
+        .ticket-list h3 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+        
+        .ticket-item {
+            background: #f0f4ff;
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ticket-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+        
+        .ticket-item.current {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-color: var(--primary-dark);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        
+        .back-button:hover {
+            color: var(--primary-dark);
+            gap: 15px;
+        }
+        
+        .floating {
+            position: absolute;
+            animation: float 15s infinite ease-in-out;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .floating:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+        
+        .floating:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            width: 100px;
+            height: 100px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            animation-delay: 2s;
+        }
+        
+        .floating:nth-child(3) {
+            top: 30%;
+            right: 20%;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--light-text);
+            font-size: 14px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .ticket-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ticket-number-large {
+                font-size: 32px;
+            }
+            
+            .buyer-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .tickets-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating"></div>
+    <div class="floating"></div>
+    <div class="floating"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <h1>BÚSQUEDA DE BOLETOS</h1>
+            <p>RIFA PREMIUM - GANA CON YAIR™</p>
+        </header>
+
+        <div class="search-section">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Volver a la página principal
+            </a>
+            
+            <div class="instructions">
+                <p><strong>Instrucciones:</strong> Ingresa el número de boleto que deseas buscar (ej: 02525, 01910)</p>
+                <p>El sistema mostrará:</p>
+                <ul>
+                    <li>Información completa del comprador</li>
+                    <li>Fecha y hora de la transacción</li>
+                    <li>Número de referencia</li>
+                    <li>Todos los boletos de esa transacción</li>
+                </ul>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="ticketSearchInput" placeholder="Ej: 02525, 01910, 00345..." onkeypress="handleKeyPress(event)">
+                <button onclick="searchTicket()">
+                    <i class="fas fa-search"></i> Buscar Boleto
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loadingIndicator">
+            <i class="fas fa-spinner"></i>
+            <p>Buscando información del boleto...</p>
+        </div>
+        
+        <div class="results-section" id="resultsContainer">
+            <div class="no-results" id="noResults">
+                <i class="fas fa-search"></i>
+                <p>Ingresa un número de boleto para buscar información</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Sistema de Búsqueda de Boletos - Rifa Premium &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        const CONFIG = {
+            supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c"
+        };
+
+        function formatTicketNumber(number) {
+            return String(number).padStart(5, '0');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchTicket();
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+            document.getElementById('noResults').style.display = show ? 'none' : 'block';
+        }
+
+        async function searchTicket() {
+            const ticketNumberInput = document.getElementById('ticketSearchInput').value.trim();
+            
+            if (!ticketNumberInput) {
+                alert('Por favor ingresa un número de boleto');
+                return;
+            }
+            
+            // Convertir a número y formatear
+            const ticketNumber = parseInt(ticketNumberInput);
+            if (isNaN(ticketNumber) || ticketNumber <= 0 || ticketNumber > 10000) {
+                alert('Por favor ingresa un número de boleto válido (1-10000)');
+                return;
+            }
+            
+            const formattedTicketNumber = formatTicketNumber(ticketNumber);
+            
+            showLoading(true);
+            
+            try {
+                // Buscar el ticket específico
+                const ticketResponse = await fetch(
+                    `${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}&select=*,transactions(*)`, 
+                    {
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    }
+                );
+                
+                if (!ticketResponse.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                
+                const ticketData = await ticketResponse.json();
+                
+                if (ticketData.length === 0) {
+                    showLoading(false);
+                    document.getElementById('resultsContainer').innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-times-circle"></i>
+                            <p>No se encontró el boleto <strong>${formattedTicketNumber}</strong></p>
+                            <p>Verifica que el número sea correcto</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const ticket = ticketData[0];
+                const transaction = ticket.transactions;
+                
+                // Obtener todos los tickets de esta transacción
+                const allTicketsResponse = await fetch(
+                    `${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${ticket.transaction_id}&select=ticket_number`, 
+                    {
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    }
+                );
+                
+                if (!allTicketsResponse.ok) {
+                    throw new Error('Error al obtener los boletos de la transacción');
+                }
+                
+                const allTickets = await allTicketsResponse.json();
+                
+                // Formatear fecha
+                const transactionDate = new Date(transaction.date);
+                const formattedDate = `${transactionDate.toLocaleDateString()} ${transactionDate.toLocaleTimeString()}`;
+                
+                // Mostrar resultados
+                displayResults(ticket, transaction, allTickets, formattedDate);
+                
+            } catch (error) {
+                console.error('Error buscando boleto:', error);
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Ocurrió un error al buscar el boleto</p>
+                        <p>Por favor intenta nuevamente</p>
+                    </div>
+                `;
+            }
+            
+            showLoading(false);
+        }
+
+        function displayResults(ticket, transaction, allTickets, formattedDate) {
+            const formattedTicketNumber = formatTicketNumber(ticket.ticket_number);
+            const statusClass = transaction.status === 'VERIFICADO' ? 'status-verified' : 'status-pending';
+            
+            // Ordenar boletos numéricamente
+            const sortedTickets = allTickets.map(t => t.ticket_number).sort((a, b) => a - b);
+            
+            document.getElementById('resultsContainer').innerHTML = `
+                <div class="ticket-details">
+                    <div class="ticket-header">
+                        <div class="ticket-number-large">${formattedTicketNumber}</div>
+                        <div class="transaction-status ${statusClass}">${transaction.status}</div>
+                    </div>
+                    
+                    <div class="buyer-info">
+                        <div class="info-card">
+                            <h3><i class="fas fa-user"></i> Comprador</h3>
+                            <p>${transaction.name}</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-id-card"></i> Cédula</h3>
+                            <p>${transaction.id_number}</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-phone"></i> Teléfono</h3>
+                            <p>${transaction.phone}</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-envelope"></i> Email</h3>
+                            <p>${transaction.email || 'No proporcionado'}</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-calendar"></i> Fecha de compra</h3>
+                            <p>${formattedDate}</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-hashtag"></i> Referencia</h3>
+                            <p>${transaction.reference}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-list">
+                        <h3><i class="fas fa-ticket-alt"></i> Boletos de esta transacción (${allTickets.length})</h3>
+                        <div class="tickets-grid">
+                            ${sortedTickets.map(t => {
+                                const formattedT = formatTicketNumber(t);
+                                const isCurrent = t === ticket.ticket_number;
+                                return `<div class="ticket-item ${isCurrent ? 'current' : ''}">${formattedT}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
